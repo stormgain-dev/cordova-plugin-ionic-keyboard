@@ -190,7 +190,7 @@ Attach handler to this event to be able to receive notification when keyboard is
 ```js
 window.addEventListener('keyboardDidShow', (event) => {
     // Describe your logic which will be run each time when keyboard is about to be shown.
-    console.log(event.keyboardHeight);
+    console.log(event.keyboardHeight, event.visibleAreaHeight);
 });
 ```
 

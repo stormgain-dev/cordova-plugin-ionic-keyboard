@@ -5,16 +5,16 @@ var argscheck = require('cordova/argscheck'),
 
 var Keyboard = function () {};
 
-Keyboard.fireOnShow = function (height) {
+Keyboard.fireOnShow = function (height, visibleAreaHeight) {
     Keyboard.isVisible = true;
     cordova.fireWindowEvent('keyboardDidShow', {
-        'keyboardHeight': height
+        'keyboardHeight': height, visibleAreaHeight: visibleAreaHeight,
     });
 
     // To support the keyboardAttach directive listening events
     // inside Ionic's main bundle
     cordova.fireWindowEvent('native.keyboardshow', {
-        'keyboardHeight': height
+        'keyboardHeight': height, visibleAreaHeight: visibleAreaHeight,
     });
 };
 
@@ -31,9 +31,9 @@ Keyboard.fireOnHiding = function () {
     cordova.fireWindowEvent('keyboardWillHide');
 };
 
-Keyboard.fireOnShowing = function (height) {
+Keyboard.fireOnShowing = function (height, visibleAreaHeight) {
     cordova.fireWindowEvent('keyboardWillShow', {
-        'keyboardHeight': height
+        'keyboardHeight': height, visibleAreaHeight: visibleAreaHeight,
     });
 };
 
@@ -67,9 +67,10 @@ channel.onCordovaReady.subscribe(function () {
     function success(msg) {
         var action = msg.charAt(0);
         if (action === 'S') {
-            var keyboardHeight = parseInt(msg.substr(1));
-            Keyboard.fireOnShowing(keyboardHeight);
-            Keyboard.fireOnShow(keyboardHeight);
+            var heights = msg.substr(1).split("_");
+            var keyboardHeight = parseInt(heights[0]), visibleAreaHeight = parseInt(heights[1]);
+            Keyboard.fireOnShowing(keyboardHeight, visibleAreaHeight);
+            Keyboard.fireOnShow(keyboardHeight, visibleAreaHeight);
 
         } else if (action === 'H') {
             Keyboard.fireOnHiding();
